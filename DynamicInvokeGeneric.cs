@@ -1,4 +1,4 @@
-﻿// Author: Ryan Cobb (@cobbr_io)
+// Author: Ryan Cobb (@cobbr_io)
 // Project: SharpSploit (https://github.com/cobbr/SharpSploit)
 // License: BSD 3-Clause
 
@@ -703,6 +703,25 @@ namespace Dinvoke.DynamicInvoke
             return DynamicFunctionInvoke(pFunc, functionDelegateType, ref parameters);
         }
 
+        /// <summary>
+        /// Call a manually mapped DLL by Export. Modified to pass parameters by reference.
+        /// </summary>
+        /// <author>Ruben Boonen (@FuzzySec)</author>
+        /// <param name="peInfo">Module meta data struct (PE.PE_META_DATA).</param>
+        /// <param name="moduleMemoryBase">Base address of the module in memory.</param>
+        /// <param name="exportName">The name of the export to search for (e.g. "NtAlertResumeThread").</param>
+        /// <param name="functionDelegateType">Prototype for the function, represented as a Delegate object.</param>
+        /// <param name="parameters">Arbitrary set of parameters to pass to the function. Can be modified if function uses call by reference.</param>
+        /// <param name="callEntry">Specify whether to invoke the module's entry point.</param>
+        /// <returns>void</returns>
+        public static object CallMappedDLLModuleExport(Data.PE.PE_META_DATA peInfo, IntPtr moduleMemoryBase, string exportName, Type functionDelegateType, ref object[] parameters, bool callEntry = true)
+        {
+            if (callEntry)
+                CallMappedDLLModule(peInfo, moduleMemoryBase);
+
+            var pFunc = GetExportAddress(moduleMemoryBase, exportName);
+            return DynamicFunctionInvoke(pFunc, functionDelegateType, ref parameters);
+        }
         /// <summary>
         /// Call a manually mapped DLL by Export.
         /// </summary>
