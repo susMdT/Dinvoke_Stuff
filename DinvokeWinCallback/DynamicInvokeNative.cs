@@ -1,4 +1,4 @@
-// Author: Ryan Cobb (@cobbr_io), The Wover (@TheRealWover)
+﻿// Author: Ryan Cobb (@cobbr_io), The Wover (@TheRealWover)
 // Project: SharpSploit (https://github.com/cobbr/SharpSploit)
 // License: BSD 3-Clause
 
