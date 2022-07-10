@@ -1,4 +1,4 @@
-﻿// Author: Ryan Cobb (@cobbr_io), The Wover (@TheRealWover)
+// Author: Ryan Cobb (@cobbr_io), The Wover (@TheRealWover)
 // Project: SharpSploit (https://github.com/cobbr/SharpSploit)
 // License: BSD 3-Clause
 
@@ -332,7 +332,7 @@ namespace Dinvoke.DynamicInvoke
         ///     procHandle, startAddress, IntPtr.Zero, Data.Native.NT_CREATION_FLAGS.HIDE_FROM_DEBUGGER, 0, 0, 0, IntPtr.Zero);
         /// 
         /// </example>
-        private struct Delegates
+        public struct Delegates
         {
             [UnmanagedFunctionPointer(CallingConvention.StdCall)]
             public delegate Data.Native.NTSTATUS NtCreateThreadEx(
