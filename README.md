@@ -9,7 +9,7 @@ Currently Available:
 1. Local Process Injection (via CreateRemoteThread and [EnumDisplayMonitors](https://marcoramilli.com/2022/06/15/running-shellcode-through-windows-callbacks/)  
 2. Remote Process Injection (via creating a internet explorer instance)
 3. Remote Process Injection (via section + mapping views on microsoft edge)
-4. 
+
 Credit to [rasta-mouse](https://github.com/rasta-mouse/DInvoke) for the minimalist implementation of Dinvoke Libraries.
 ```
 [-] Usage: DinvokeDeez.exe
