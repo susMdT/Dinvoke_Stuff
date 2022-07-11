@@ -451,5 +451,12 @@ namespace Dinvoke
 
             MaximumNtStatus = 0xffffffff
         }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct STARTUPINFOEX
+        {
+            public STARTUPINFO StartupInfo;
+            public IntPtr lpAttributeList;
+        }
     }
 }

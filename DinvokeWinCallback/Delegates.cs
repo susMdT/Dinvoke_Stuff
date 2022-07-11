@@ -56,6 +56,20 @@ namespace Dinvoke
             out Structs.PROCESS_INFORMATION lpProcessInformation);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate Boolean CreateProcess2(
+            string lpApplicationName,
+            string lpCommandLine,
+            ref Structs.SECURITY_ATTRIBUTES lpProcessAttributes,
+            ref Structs.SECURITY_ATTRIBUTES lpThreadAttributes,
+            bool bInheritHandles,
+            Structs.ProcessCreationFlags
+            dwCreationFlags,
+            IntPtr lpEnvironment,
+            string lpCurrentDirectory,
+            [In] ref Structs.STARTUPINFOEX lpStartupInfo,
+            out Structs.PROCESS_INFORMATION lpProcessInformation);
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate UInt32 ZwQueryInformationProcess(
             IntPtr hProcess,
             Int32 procInformationClass,
@@ -156,5 +170,22 @@ namespace Dinvoke
             Int32 maximumStackSize,
             IntPtr attributeList
             );
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate bool InitializeProcThreadAttributeList(
+            IntPtr lpAttributeList, 
+            int dwAttributeCount, 
+            int dwFlags, 
+            ref IntPtr lpSize);
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        public delegate  bool UpdateProcThreadAttribute(
+            IntPtr lpAttributeList, 
+            uint dwFlags, 
+            IntPtr Attribute, 
+            IntPtr lpValue, 
+            IntPtr cbSize, 
+            IntPtr lpPreviousValue, 
+            IntPtr lpReturnSize);
     }
 }

